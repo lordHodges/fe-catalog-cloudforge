@@ -65,10 +65,14 @@ export class CheckoutStore {
           this.orderStatus.set("success");
           this.isSubmitting.set(false);
           this.cartService.clearCart();
+          if (confirmation.initPoint && typeof window !== "undefined") {
+            window.location.href = confirmation.initPoint;
+          }
         },
         error: (err) => {
-          const msg =
+          const rawMsg =
             err?.error?.message || err?.message || "Order submission failed";
+          const msg = Array.isArray(rawMsg) ? rawMsg.join(", ") : rawMsg;
           this.errorMessage.set(msg);
           this.orderStatus.set("error");
           this.isSubmitting.set(false);

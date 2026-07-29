@@ -70,16 +70,81 @@ describe("HttpOrderRepository", () => {
 
     const req = httpMock.expectOne("/api/orders");
     expect(req.request.method).toBe("POST");
-    expect(req.request.body).toEqual({
-      ...payload,
-      payer: payload.customer,
-    });
+    expect(req.request.body).toEqual(payload);
     req.flush(mockResponse);
 
     expect(result).toBeDefined();
     expect(result?.orderId).toBe("ORD-999");
     expect(result?.status).toBe("created");
     expect(result?.totalAmount).toBe(99.99);
+  });
+
+  it("should map init_point when provided by backend", () => {
+    const payload: CreateOrderPayload = {
+      customer: {
+        name: "Jane Doe",
+        email: "jane@example.com",
+        address: "456 Market Ave",
+        city: "San Francisco",
+        zipCode: "94101",
+      },
+      items: [{ productId: "p1", quantity: 1, price: 99.99 }],
+      totalAmount: 99.99,
+    };
+
+    const mockResponse = {
+      init_point:
+        "https://www.mercadopago.cl/checkout/v1/redirect?pref_id=12345",
+      order_id: "ORD-INIT-123",
+    };
+
+    let result: OrderConfirmation | undefined;
+    repository.createOrder(payload).subscribe((res) => {
+      result = res;
+    });
+
+    const req = httpMock.expectOne("/api/orders");
+    req.flush(mockResponse);
+
+    expect(result).toBeDefined();
+    expect(result?.orderId).toBe("ORD-INIT-123");
+    expect(result?.initPoint).toBe(
+      "https://www.mercadopago.cl/checkout/v1/redirect?pref_id=12345",
+    );
+  });
+
+  it("should re-throw error when server responds with 400 Bad Request error", () => {
+    const payload: CreateOrderPayload = {
+      customer: {
+        name: "John Smith",
+        email: "john@example.com",
+        address: "123 Main St",
+        city: "Austin",
+        zipCode: "78701",
+      },
+      items: [{ productId: "p2", quantity: 2, price: 50.0 }],
+      totalAmount: 100.0,
+    };
+
+    let errorResult: any;
+    repository.createOrder(payload).subscribe({
+      next: () => {
+        throw new Error("Should have failed");
+      },
+      error: (err) => {
+        errorResult = err;
+      },
+    });
+
+    const req = httpMock.expectOne("/api/orders");
+    req.flush(
+      { message: ["payer should not be empty"] },
+      { status: 400, statusText: "Bad Request" },
+    );
+
+    expect(errorResult).toBeDefined();
+    expect(errorResult.status).toBe(400);
+    expect(errorResult.error.message).toEqual(["payer should not be empty"]);
   });
 
   it("should return fallback order confirmation when receiving non-JSON/HTML response", () => {

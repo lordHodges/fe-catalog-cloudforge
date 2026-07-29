@@ -22,12 +22,8 @@ export class HttpOrderRepository extends OrderRepository {
 
   createOrder(payload: CreateOrderPayload): Observable<OrderConfirmation> {
     const url = this.getApiUrl();
-    const body = {
-      ...payload,
-      payer: payload.customer,
-    };
 
-    return this.http.post<any>(url, body).pipe(
+    return this.http.post<any>(url, payload).pipe(
       map((res) => {
         if (!res || typeof res !== "object") {
           return this.buildFallbackConfirmation(payload);
@@ -37,10 +33,8 @@ export class HttpOrderRepository extends OrderRepository {
       catchError((err: any) => {
         if (
           err instanceof HttpErrorResponse &&
-          err.status === 500 &&
-          err.error &&
-          typeof err.error === "object" &&
-          typeof err.error.message === "string"
+          err.status >= 400 &&
+          err.status < 600
         ) {
           return throwError(() => err);
         }
@@ -54,8 +48,11 @@ export class HttpOrderRepository extends OrderRepository {
     res: any,
     payload: CreateOrderPayload,
   ): OrderConfirmation {
+    const initPoint = res.init_point || res.initPoint;
+
     return {
       orderId:
+        res.order_id ||
         res.orderId ||
         res.id ||
         `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -66,6 +63,7 @@ export class HttpOrderRepository extends OrderRepository {
           : payload.totalAmount,
       createdAt: res.createdAt || new Date().toISOString(),
       message: res.message || "Pedido procesado exitosamente",
+      ...(initPoint ? { initPoint } : {}),
     };
   }
 

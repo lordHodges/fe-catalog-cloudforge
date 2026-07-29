@@ -24,4 +24,5 @@ export interface OrderConfirmation {
   totalAmount: number;
   createdAt?: string;
   message?: string;
+  initPoint?: string;
 }

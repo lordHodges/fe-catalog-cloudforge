@@ -73,6 +73,31 @@ describe("CheckoutStore", () => {
     expect(cartService.cartItems().length).toBe(0);
   });
 
+  it("should attempt window redirect when confirmation contains initPoint", () => {
+    const mockConfirmation: OrderConfirmation = {
+      orderId: "ORD-12345",
+      status: "created",
+      totalAmount: 200,
+      initPoint: "https://www.mercadopago.cl/checkout/v1/redirect?pref_id=999",
+    };
+
+    mockOrderRepository.createOrder.mockReturnValue(of(mockConfirmation));
+
+    const customer: CustomerInfo = {
+      name: "Alex Developer",
+      email: "alex@example.com",
+      address: "123 Cloudforge St",
+      city: "Tech City",
+      zipCode: "90210",
+    };
+
+    store.submitOrder(customer);
+
+    expect(store.orderConfirmation()?.initPoint).toBe(
+      "https://www.mercadopago.cl/checkout/v1/redirect?pref_id=999",
+    );
+  });
+
   it("should handle order submission error", () => {
     mockOrderRepository.createOrder.mockReturnValue(
       throwError(() => new Error("Server error")),
