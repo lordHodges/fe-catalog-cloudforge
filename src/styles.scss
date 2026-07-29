@@ -1,0 +1,153 @@
+/* Dark Purple Neon Theme & Material Design 3 Styling */
+:root {
+  --bg-primary: #0d0b18;
+  --bg-surface: #160b2e;
+  --bg-surface-glass: rgba(22, 11, 46, 0.78);
+  --color-purple: #6f42c1;
+  --color-purple-deep: #9d4edd;
+  --color-cyan: #00e5ff;
+  --color-cyan-glow: #33ebff;
+  --color-magenta: #ff007f;
+  --color-text-primary: #f8f9fa;
+  --color-text-secondary: #a0a5ba;
+  --border-neon: rgba(157, 78, 221, 0.35);
+  --border-neon-cyan: rgba(0, 229, 255, 0.4);
+  --glow-cyan: 0 0 16px rgba(0, 229, 255, 0.5);
+  --glow-purple: 0 0 20px rgba(157, 78, 221, 0.4);
+  --glow-magenta: 0 0 16px rgba(255, 0, 127, 0.5);
+}
+
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* Global Reset & Base Typography */
+body {
+  background-color: var(--bg-primary);
+  color: var(--color-text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Material Design 3 Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(157, 78, 221, 0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan);
+}
+
+/* Material Design 3 Glassmorphism Elevation */
+.glass-card {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-neon);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), var(--glow-purple);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--color-cyan);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6), var(--glow-cyan);
+}
+
+/* Custom Neon Button Styles */
+.btn-neon-primary {
+  background: linear-gradient(135deg, #9d4edd 0%, #6f42c1 100%);
+  color: #ffffff;
+  border: 1px solid var(--color-cyan);
+  border-radius: 28px;
+  box-shadow: var(--glow-cyan);
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-neon-primary:hover {
+  background: linear-gradient(135deg, #00e5ff 0%, #9d4edd 100%);
+  color: #0d0b18;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.85);
+  transform: translateY(-2px);
+}
+
+.btn-neon-accent {
+  background: linear-gradient(135deg, #ff007f 0%, #9d4edd 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 28px;
+  box-shadow: var(--glow-magenta);
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-neon-accent:hover {
+  background: linear-gradient(135deg, #ff007f 0%, #00e5ff 100%);
+  box-shadow: 0 0 24px rgba(255, 0, 127, 0.85);
+  transform: translateY(-2px);
+}
+
+.btn-neon-cyan {
+  background: var(--color-cyan);
+  color: #0d0b18;
+  border: none;
+  border-radius: 28px;
+  font-weight: 600;
+  box-shadow: var(--glow-cyan);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-neon-cyan:hover:not(:disabled) {
+  background: var(--color-cyan-glow);
+  color: #0d0b18;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.85);
+  transform: translateY(-2px);
+}
+
+.btn-neon-cyan:disabled {
+  background: #2d2645;
+  color: #7b7f96;
+  box-shadow: none;
+  border: none;
+}
+
+.badge-neon {
+  background-color: var(--color-magenta);
+  color: #ffffff;
+  box-shadow: var(--glow-magenta);
+  font-weight: bold;
+}
+
+/* Common Text Color Utilities */
+.text-cyan {
+  color: var(--color-cyan) !important;
+}
+
+.text-neon-cyan {
+  color: var(--color-cyan) !important;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+.text-purple-deep {
+  color: var(--color-purple-deep) !important;
+}
+
+/* Smooth Focus Glow for Form Controls */
+.form-control:focus, .form-select:focus {
+  background-color: rgba(22, 11, 46, 0.9) !important;
+  border-color: var(--color-cyan) !important;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.4) !important;
+  color: #ffffff !important;
+}
+
