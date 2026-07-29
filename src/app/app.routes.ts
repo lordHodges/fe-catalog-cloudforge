@@ -1,20 +1,20 @@
-import { Routes } from '@angular/router';
+import { Routes } from "@angular/router";
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'catalog', pathMatch: 'full' },
+  { path: "", redirectTo: "catalog", pathMatch: "full" },
   {
-    path: 'catalog',
+    path: "catalog",
     loadComponent: () =>
-      import('./features/catalog/catalog.component').then(
-        (m) => m.CatalogComponent
+      import("./features/catalog/catalog.component").then(
+        (m) => m.CatalogComponent,
       ),
   },
   {
-    path: 'checkout',
+    path: "checkout",
     loadComponent: () =>
-      import('./features/checkout/checkout.component').then(
-        (m) => m.CheckoutComponent
+      import("./features/checkout/checkout.component").then(
+        (m) => m.CheckoutComponent,
       ),
   },
-  { path: '**', redirectTo: 'catalog' }
+  { path: "**", redirectTo: "catalog" },
 ];

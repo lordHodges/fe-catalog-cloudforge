@@ -1,10 +1,10 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if test.only was accidentally left in code */
@@ -15,26 +15,26 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter configuration */
   reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
+    ["list"],
+    ["html", { open: "never", outputFolder: "playwright-report" }],
   ],
   /* Shared settings for all projects */
   use: {
     /* Base URL for relative page.goto navigation */
-    baseURL: process.env.BASE_URL || 'http://localhost:4200',
+    baseURL: process.env.BASE_URL || "http://localhost:4200",
     /* Collect trace when retrying failed tests */
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
     /* Capture screenshot on failure */
-    screenshot: 'only-on-failure',
+    screenshot: "only-on-failure",
     /* Capture video on failure */
-    video: 'retain-on-failure',
+    video: "retain-on-failure",
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
 
@@ -42,8 +42,8 @@ export default defineConfig({
   webServer: process.env.SKIP_WEBSERVER
     ? undefined
     : {
-        command: 'npm start',
-        url: 'http://localhost:4200',
+        command: "npm start",
+        url: "http://localhost:4200",
         reuseExistingServer: true,
         timeout: 120 * 1000,
       },

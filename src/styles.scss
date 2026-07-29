@@ -17,14 +17,21 @@
   --glow-magenta: 0 0 16px rgba(255, 0, 127, 0.5);
 }
 
-@import 'bootstrap/dist/css/bootstrap.min.css';
-@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
 
 /* Global Reset & Base Typography */
 body {
   background-color: var(--bg-primary);
   color: var(--color-text-primary);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -55,13 +62,17 @@ body {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-neon);
   border-radius: 16px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), var(--glow-purple);
+  box-shadow:
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    var(--glow-purple);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
   border-color: var(--color-cyan);
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6), var(--glow-cyan);
+  box-shadow:
+    0 12px 40px 0 rgba(0, 0, 0, 0.6),
+    var(--glow-cyan);
 }
 
 /* Custom Neon Button Styles */
@@ -144,10 +155,10 @@ body {
 }
 
 /* Smooth Focus Glow for Form Controls */
-.form-control:focus, .form-select:focus {
+.form-control:focus,
+.form-select:focus {
   background-color: rgba(22, 11, 46, 0.9) !important;
   border-color: var(--color-cyan) !important;
   box-shadow: 0 0 16px rgba(0, 229, 255, 0.4) !important;
   color: #ffffff !important;
 }
-

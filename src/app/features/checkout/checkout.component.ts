@@ -1,1 +1,1 @@
-export * from './ui/checkout.component';
+export * from "./ui/checkout.component";

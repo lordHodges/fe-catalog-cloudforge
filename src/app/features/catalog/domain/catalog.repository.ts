@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
-import { Product } from './product.model';
+import { Observable } from "rxjs";
+import { Product } from "./product.model";
 
 export abstract class CatalogRepository {
   abstract getProducts(): Observable<Product[]>;

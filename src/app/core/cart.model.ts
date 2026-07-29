@@ -1,2 +1,1 @@
-export * from '../features/cart/domain/cart.model';
-
+export * from "../features/cart/domain/cart.model";

@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { App } from './app';
+import { TestBed } from "@angular/core/testing";
+import { provideRouter } from "@angular/router";
+import { App } from "./app";
 
-describe('App', () => {
+describe("App", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
@@ -10,19 +10,18 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it("should create the app", () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
-    expect(app.title).toBe('CloudForge Catalog');
+    expect(app.title).toBe("CloudForge Catalog");
   });
 
-  it('should render navbar and router outlet', async () => {
+  it("should render navbar and router outlet", async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-navbar')).toBeTruthy();
-    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector("app-navbar")).toBeTruthy();
+    expect(compiled.querySelector("router-outlet")).toBeTruthy();
   });
 });
-

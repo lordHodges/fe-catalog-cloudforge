@@ -1,1 +1,1 @@
-export * from '../features/catalog/domain/product.model';
+export * from "../features/catalog/domain/product.model";
