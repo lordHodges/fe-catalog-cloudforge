@@ -3,6 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Tier 5: Adversarial Edge Cases & System Hardening', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
   test('TC-ADV-E2E-01: Rapid double click on checkout submission (burst protection)', async ({ page }) => {
@@ -140,29 +142,31 @@ test.describe('Tier 5: Adversarial Edge Cases & System Hardening', () => {
   });
 
   test('TC-ADV-E2E-05: Rapid cart quantity increment clamping at maximum product stock', async ({ page }) => {
-    // Select product with stock = 5 ("AI Vector Engine GPU")
-    const cardWithStock5 = page.locator('[data-testid="product-card"]:has-text("Stock: 5")');
+    // Select product with stock = 5 ("AI Vector Engine GPU", the ONLY product with exactly stock=5)
+    // Note: using has-text("Stock: 5") would ALSO match stock=50 (substring), so we use unique title
+    const cardWithStock5 = page.locator('[data-testid="product-card"]', { hasText: 'AI Vector Engine GPU' });
     const addBtn = cardWithStock5.locator('[data-testid="add-to-cart-btn"]');
     await addBtn.first().click();
 
     // Open cart drawer
     await page.locator('[data-testid="cart-toggle-btn"]').click();
 
+    const quantityLabel = page.locator('[data-testid="item-quantity"]').first();
     const incBtn = page.locator('[data-testid="qty-increment"]').first();
     await expect(incBtn).toBeVisible();
 
-    // Click increment repeatedly up to stock 5
-    for (let i = 0; i < 10; i++) {
-      if (await incBtn.isEnabled()) {
-        await incBtn.click();
-      } else {
-        break;
-      }
+    // Increment from qty=1 up to stock=5, waiting for Angular signal propagation between clicks
+    for (let i = 0; i < 4; i++) {
+      await incBtn.click();
+      await expect(quantityLabel).toHaveText(String(i + 2), { timeout: 5000 });
     }
 
-    // Quantity should be clamped at 5 and increment button disabled
-    const qtyText = await page.locator('[data-testid="item-quantity"]').first().innerText();
-    expect(qtyText.trim()).toBe('5');
+    // After reaching stock = 5, the increment button must be disabled
     await expect(incBtn).toBeDisabled();
+
+    // Attempt one more click to confirm clamping (button should be disabled)
+    await incBtn.click({ force: true }).catch(() => {});
+    // Quantity must remain at 5
+    await expect(quantityLabel).toHaveText('5');
   });
 });

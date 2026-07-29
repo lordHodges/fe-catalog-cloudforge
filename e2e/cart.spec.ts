@@ -3,6 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Tier 3: Cart Cross-Feature Interactions & State Management', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
   test('TC-CART-01: Should toggle cart drawer open and close', async ({ page }) => {
@@ -59,11 +61,13 @@ test.describe('Tier 3: Cart Cross-Feature Interactions & State Management', () =
 
     // Increment quantity
     await incBtn.click();
+    await page.waitForTimeout(100);
     const incrementedQty = await qtyDisplay.innerText() || await qtyDisplay.inputValue();
     expect(parseInt(incrementedQty, 10)).toBe(parseInt(initialQty, 10) + 1);
 
     // Decrement quantity
     await decBtn.click();
+    await page.waitForTimeout(100);
     const decrementedQty = await qtyDisplay.innerText() || await qtyDisplay.inputValue();
     expect(parseInt(decrementedQty, 10)).toBe(parseInt(initialQty, 10));
   });
