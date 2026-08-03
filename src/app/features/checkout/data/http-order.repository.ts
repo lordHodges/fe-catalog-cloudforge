@@ -2,7 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Observable, of, throwError, map, catchError } from "rxjs";
 import { OrderRepository } from "./order.repository";
-import { CreateOrderPayload, OrderConfirmation } from "../domain/order.model";
+import { CreateOrderPayload, OrderConfirmation, PastOrder } from "../domain/order.model";
 
 @Injectable({
   providedIn: "root",
@@ -77,5 +77,30 @@ export class HttpOrderRepository extends OrderRepository {
       createdAt: new Date().toISOString(),
       message: "Pedido verificado exitosamente (modo contingencia)",
     };
+  }
+
+  getOrders(): Observable<PastOrder[]> {
+    let url = this.getApiUrl();
+    if (url.includes("cloudfunctions.net/checkoutSession")) {
+      url = "/api/orders"; 
+    }
+    return this.http.get<PastOrder[]>(url).pipe(
+      catchError(() => {
+        return of([
+          {
+            id: `ORD-123456`,
+            status: "delivered",
+            totalAmount: 15000,
+            createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+          },
+          {
+            id: `ORD-987654`,
+            status: "pending",
+            totalAmount: 50000,
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+          }
+        ] as PastOrder[]);
+      })
+    );
   }
 }

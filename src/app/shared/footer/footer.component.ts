@@ -16,7 +16,7 @@ import { Component } from "@angular/core";
         </div>
         <p class="text-secondary small mb-0">
           &copy; {{ currentYear }} CloudForge Inc. Todos los derechos
-          reservados. Impulsado por Angular Signals & NestJS.
+          reservados.
         </p>
       </div>
     </footer>

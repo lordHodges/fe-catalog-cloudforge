@@ -1,22 +1,27 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { CartService } from "../../core/cart.service";
 
+import { TranslatePipe } from "../pipes/translate.pipe";
+import { TranslationService, SupportedLanguage } from "../../core/services/translation.service";
+
 @Component({
   selector: "app-navbar",
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, TranslatePipe],
   template: `
     <header data-testid="header" class="sticky-top">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-purple-dark py-3">
+      <nav class="navbar navbar-expand-lg py-3">
         <div class="container">
           <a
-            class="navbar-brand d-flex align-items-center gap-2 fw-bold text-light fs-4"
+            class="navbar-brand d-flex align-items-center gap-2 fw-bold fs-4"
             routerLink="/"
+            role="link"
+            aria-label="CloudForge Home"
           >
-            <i class="bi bi-cloud-lightning-fill text-cyan fs-3 brand-icon"></i>
-            <span class="brand-text">CloudForge Marketplace</span>
+            <i class="bi bi-cloud-lightning-fill text-cyan fs-3 brand-icon" aria-hidden="true"></i>
+            <span class="brand-text">{{ 'NAV.BRAND' | translate }}</span>
           </a>
 
           <button
@@ -37,11 +42,12 @@ import { CartService } from "../../core/cart.service";
             >
               <li class="nav-item">
                 <a
-                  class="nav-link px-3 py-2 rounded-3 text-light"
+                  class="nav-link px-3 py-2 rounded-3"
                   routerLink="/catalog"
                   routerLinkActive="active"
+                  role="menuitem"
                 >
-                  Catálogo
+                  {{ 'NAV.CATALOG' | translate }}
                 </a>
               </li>
             </ul>
@@ -49,12 +55,40 @@ import { CartService } from "../../core/cart.service";
             <div class="d-flex align-items-center gap-3">
               <button
                 type="button"
+                (click)="toggleLanguage()"
+                class="btn btn-outline-cyan d-flex align-items-center justify-content-center p-2 rounded-circle"
+                aria-label="Cambiar idioma / Change language"
+                style="width: 42px; height: 42px; font-weight: bold; font-size: 0.9rem;"
+              >
+                {{ translationService.getLanguage() | uppercase }}
+              </button>
+
+              <button
+                type="button"
+                data-testid="theme-toggle-btn"
+                (click)="toggleTheme()"
+                class="btn btn-outline-cyan d-flex align-items-center justify-content-center p-2 rounded-circle"
+                aria-label="Cambiar tema"
+                role="button"
+                style="width: 42px; height: 42px;"
+              >
+                @if (isLightTheme) {
+                  <i class="bi bi-moon-stars fs-5" aria-hidden="true"></i>
+                } @else {
+                  <i class="bi bi-sun fs-5" aria-hidden="true"></i>
+                }
+              </button>
+
+              <button
+                type="button"
                 data-testid="cart-toggle-btn"
                 (click)="cartService.toggleCart()"
                 class="btn btn-outline-cyan position-relative d-flex align-items-center gap-2 px-3 py-2 rounded-pill fw-semibold"
+                aria-label="Abrir carrito de compras"
+                role="button"
               >
-                <i class="bi bi-cart3 fs-5"></i>
-                <span>Carrito</span>
+                <i class="bi bi-cart3 fs-5" aria-hidden="true"></i>
+                <span>{{ 'NAV.CART' | translate }}</span>
                 @if (cartService.totalItemsCount() > 0) {
                   <span
                     data-testid="cart-count-badge"
@@ -73,10 +107,10 @@ import { CartService } from "../../core/cart.service";
   styles: [
     `
       nav {
-        background: rgba(13, 11, 24, 0.92);
+        background: var(--nav-bg, rgba(13, 11, 24, 0.92));
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(157, 78, 221, 0.35) !important;
+        border-bottom: 1px solid var(--nav-border, rgba(157, 78, 221, 0.35)) !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       }
       .brand-icon {
@@ -85,7 +119,7 @@ import { CartService } from "../../core/cart.service";
       .brand-text {
         background: linear-gradient(
           135deg,
-          #ffffff 0%,
+          var(--color-text-primary, #ffffff) 0%,
           #00e5ff 60%,
           #9d4edd 100%
         );
@@ -97,13 +131,13 @@ import { CartService } from "../../core/cart.service";
         color: #00e5ff;
       }
       .btn-outline-cyan {
-        border: 1px solid #00e5ff;
-        color: #00e5ff;
+        border: 1px solid var(--color-cyan, #00e5ff);
+        color: var(--color-cyan, #00e5ff);
         background: rgba(0, 229, 255, 0.04);
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .btn-outline-cyan:hover {
-        background: #00e5ff;
+        background: var(--color-cyan, #00e5ff);
         color: #0d0b18;
         box-shadow: 0 0 18px rgba(0, 229, 255, 0.6);
         transform: translateY(-1px);
@@ -114,7 +148,11 @@ import { CartService } from "../../core/cart.service";
         box-shadow: 0 0 12px rgba(255, 0, 127, 0.7);
       }
       .nav-link {
+        color: var(--color-text-secondary, #a0a5ba);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .nav-link:hover {
+        color: var(--color-text-primary, #f8f9fa);
       }
       .nav-link.active {
         color: #00e5ff !important;
@@ -125,6 +163,39 @@ import { CartService } from "../../core/cart.service";
     `,
   ],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   cartService = inject(CartService);
+  translationService = inject(TranslationService);
+  isLightTheme = false;
+
+  toggleLanguage() {
+    const current = this.translationService.getLanguage();
+    this.translationService.setLanguage(current === 'es' ? 'en' : 'es');
+  }
+
+  ngOnInit() {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("theme");
+      this.isLightTheme = savedTheme === "light";
+      this.applyTheme();
+    }
+  }
+
+  toggleTheme() {
+    this.isLightTheme = !this.isLightTheme;
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", this.isLightTheme ? "light" : "dark");
+      this.applyTheme();
+    }
+  }
+
+  private applyTheme() {
+    if (typeof document !== "undefined") {
+      if (this.isLightTheme) {
+        document.body.classList.add("light-theme");
+      } else {
+        document.body.classList.remove("light-theme");
+      }
+    }
+  }
 }

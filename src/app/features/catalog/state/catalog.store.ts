@@ -11,6 +11,8 @@ export class CatalogStore {
   readonly products = signal<Product[]>([]);
   readonly selectedCategory = signal<string>("Todas");
   readonly searchQuery = signal<string>("");
+  readonly page = signal<number>(1);
+  readonly limit = signal<number>(6);
 
   readonly categories = computed(() => {
     const list = this.products().map((p) => p.category);
@@ -40,6 +42,27 @@ export class CatalogStore {
     });
   });
 
+  readonly totalItems = computed(() => this.filteredProducts().length);
+  
+  readonly totalPages = computed(() => {
+    const total = this.totalItems();
+    const limitSize = this.limit();
+    return Math.ceil(total / limitSize);
+  });
+
+  readonly pages = computed(() => {
+    const count = this.totalPages();
+    return Array.from({ length: count }, (_, i) => i + 1);
+  });
+
+  readonly paginatedProducts = computed(() => {
+    const filtered = this.filteredProducts();
+    const currentPage = this.page();
+    const limitSize = this.limit();
+    const start = (currentPage - 1) * limitSize;
+    return filtered.slice(start, start + limitSize);
+  });
+
   constructor() {
     this.loadProducts();
   }
@@ -52,9 +75,31 @@ export class CatalogStore {
 
   setSelectedCategory(category: string): void {
     this.selectedCategory.set(category);
+    this.page.set(1);
   }
 
   setSearchQuery(query: string): void {
     this.searchQuery.set(query);
+    this.page.set(1);
+  }
+
+  setPage(pageNumber: number): void {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages()) {
+      this.page.set(pageNumber);
+    }
+  }
+
+  nextPage(): void {
+    const current = this.page();
+    if (current < this.totalPages()) {
+      this.page.set(current + 1);
+    }
+  }
+
+  prevPage(): void {
+    const current = this.page();
+    if (current > 1) {
+      this.page.set(current - 1);
+    }
   }
 }

@@ -4,7 +4,14 @@ import {
   computed,
   WritableSignal,
   Signal,
+  effect,
+  untracked,
+  inject,
 } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { AuthService } from "../../../core/services/auth.service";
+import { Observable, of } from "rxjs";
+import { catchError, map, switchMap } from "rxjs/operators";
 import { CartItem } from "../domain/cart.model";
 import { Product } from "../../catalog/domain/product.model";
 
@@ -14,6 +21,22 @@ const CART_STORAGE_KEY = "cloudforge_cart_items";
   providedIn: "root",
 })
 export class CartService {
+  private authService = inject(AuthService, { optional: true });
+  private http = inject(HttpClient, { optional: true });
+
+  constructor() {
+    if (this.authService) {
+      effect(() => {
+        const isAuth = this.authService!.isAuthenticated();
+        if (isAuth) {
+          untracked(() => {
+            this.syncCartOnLogin().subscribe();
+          });
+        }
+      });
+    }
+  }
+
   private loadInitialCart(): CartItem[] {
     if (typeof window !== "undefined" && window.localStorage) {
       try {
@@ -77,6 +100,7 @@ export class CartService {
       this.saveCart(updated);
       return updated;
     });
+    this.persistCartBackend();
   }
 
   addItem(product: Product, quantity = 1): void {
@@ -102,6 +126,7 @@ export class CartService {
       this.saveCart(updated);
       return updated;
     });
+    this.persistCartBackend();
   }
 
   incrementQuantity(productId: string | number): void {
@@ -130,6 +155,7 @@ export class CartService {
       this.saveCart(updated);
       return updated;
     });
+    this.persistCartBackend();
   }
 
   removeItem(productId: string | number): void {
@@ -143,6 +169,7 @@ export class CartService {
         localStorage.removeItem(CART_STORAGE_KEY);
       } catch {}
     }
+    this.persistCartBackend();
   }
 
   toggleCart(): void {
@@ -155,5 +182,61 @@ export class CartService {
 
   closeCart(): void {
     this.isCartOpen.set(false);
+  }
+
+  syncCartOnLogin(): Observable<CartItem[]> {
+    if (!this.authService || !this.authService.isAuthenticated() || !this.http) {
+      return of(this.cartItems());
+    }
+
+    const localItems = this.cartItems();
+
+    return this.http.get<CartItem[] | { items: CartItem[] }>("/api/cart").pipe(
+      map((res) => {
+        const remoteItems = Array.isArray(res) ? res : (res && res.items) || [];
+        return remoteItems;
+      }),
+      catchError(() => {
+        return of([] as CartItem[]);
+      }),
+      switchMap((remoteItems) => {
+        const mergedMap = new Map<string | number, CartItem>();
+
+        remoteItems.forEach((item) => {
+          if (item && item.product) {
+            mergedMap.set(item.product.id, { ...item });
+          }
+        });
+
+        localItems.forEach((localItem) => {
+          const existing = mergedMap.get(localItem.product.id);
+          if (existing) {
+            const newQty = Math.min(existing.quantity + localItem.quantity, localItem.product.stock);
+            mergedMap.set(localItem.product.id, { ...existing, quantity: newQty });
+          } else {
+            mergedMap.set(localItem.product.id, { ...localItem });
+          }
+        });
+
+        const mergedItems = Array.from(mergedMap.values());
+
+        this.cartItems.set(mergedItems);
+        this.saveCart(mergedItems);
+
+        return this.http!.post<any>("/api/cart", { items: mergedItems }).pipe(
+          map(() => mergedItems),
+          catchError(() => of(mergedItems))
+        );
+      })
+    );
+  }
+
+  private persistCartBackend(): void {
+    if (this.authService && this.authService.isAuthenticated() && this.http) {
+      this.http
+        .post<any>("/api/cart", { items: this.cartItems() })
+        .pipe(catchError(() => of(null)))
+        .subscribe();
+    }
   }
 }

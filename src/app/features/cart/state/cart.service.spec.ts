@@ -142,7 +142,11 @@ describe("CartService (Vertical Slice)", () => {
     const savedItems = [{ product: mockProduct1, quantity: 3 }];
     localStorage.setItem("cloudforge_cart_items", JSON.stringify(savedItems));
 
-    const newService = new CartService();
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [CartService]
+    });
+    const newService = TestBed.inject(CartService);
     expect(newService.cartItems().length).toBe(1);
     expect(newService.cartItems()[0].quantity).toBe(3);
   });

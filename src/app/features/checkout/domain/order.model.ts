@@ -26,3 +26,11 @@ export interface OrderConfirmation {
   message?: string;
   initPoint?: string;
 }
+
+export interface PastOrder {
+  id: string;
+  status: string;
+  totalAmount: number;
+  createdAt: string;
+  items?: OrderItemPayload[];
+}

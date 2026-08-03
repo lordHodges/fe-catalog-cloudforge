@@ -2,26 +2,31 @@ import { Component, inject } from "@angular/core";
 import { CommonModule, DecimalPipe } from "@angular/common";
 import { Router } from "@angular/router";
 import { CartService } from "../../../core/cart.service";
+import { TranslatePipe } from "../../../shared/pipes/translate.pipe";
+import { AnalyticsService } from "../../../core/services/analytics.service";
 
 @Component({
   selector: "app-cart-drawer",
   standalone: true,
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, TranslatePipe],
   template: `
     @if (cartService.isOpen()) {
-      <div class="cart-backdrop" (click)="cartService.closeCart()"></div>
+      <div class="cart-backdrop" (click)="cartService.closeCart()" role="presentation"></div>
       <div
         data-testid="cart-drawer"
         class="cart-drawer shadow-lg d-flex flex-column"
         tabIndex="-1"
+        role="dialog"
+        [attr.aria-label]="'CART.TITLE' | translate"
+        aria-modal="true"
       >
         <!-- Header -->
         <div
           class="cart-header p-3 border-bottom border-purple-glow d-flex align-items-center justify-content-between"
         >
           <h5 class="m-0 text-light fw-bold d-flex align-items-center gap-2">
-            <i class="bi bi-cart3 text-neon-cyan brand-icon"></i>
-            <span>Carrito de Compras</span>
+            <i class="bi bi-cart3 text-neon-cyan brand-icon" aria-hidden="true"></i>
+            <span>{{ 'CART.TITLE' | translate }}</span>
           </h5>
           <button
             type="button"
@@ -41,9 +46,10 @@ import { CartService } from "../../../core/cart.service";
             >
               <i
                 class="bi bi-cart-x text-cyan fs-1 mb-3 d-block brand-icon"
+                aria-hidden="true"
               ></i>
               <p class="text-light-purple fs-5 mb-0 fw-medium">
-                Tu carrito está vacío
+                {{ 'CART.EMPTY' | translate }}
               </p>
             </div>
           } @else {
@@ -82,6 +88,7 @@ import { CartService } from "../../../core/cart.service";
                       data-testid="qty-decrement"
                       (click)="decrementQuantity(item.product.id)"
                       class="btn btn-sm btn-outline-cyan px-2 py-0 fw-bold rounded-2"
+                      aria-label="Disminuir cantidad"
                     >
                       -
                     </button>
@@ -97,6 +104,7 @@ import { CartService } from "../../../core/cart.service";
                       [disabled]="item.quantity >= item.product.stock"
                       (click)="incrementQuantity(item.product.id)"
                       class="btn btn-sm btn-outline-cyan px-2 py-0 fw-bold rounded-2"
+                      aria-label="Aumentar cantidad"
                     >
                       +
                     </button>
@@ -107,9 +115,10 @@ import { CartService } from "../../../core/cart.service";
                     data-testid="remove-item-btn"
                     (click)="removeItem(item.product.id)"
                     class="btn btn-sm btn-outline-danger p-1 border-0 rounded-2"
-                    title="Eliminar"
+                    [attr.aria-label]="('CART.BTN_REMOVE' | translate) + ' ' + item.product.title"
+                    [title]="'CART.BTN_REMOVE' | translate"
                   >
-                    <i class="bi bi-trash fs-5"></i>
+                    <i class="bi bi-trash fs-5" aria-hidden="true"></i>
                   </button>
                 </div>
               }
@@ -122,7 +131,7 @@ import { CartService } from "../../../core/cart.service";
           class="cart-footer p-3 border-top border-purple-glow bg-dark-purple"
         >
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-light fw-semibold fs-5">Total:</span>
+            <span class="text-light fw-semibold fs-5">{{ 'CART.TOTAL' | translate }}</span>
             <span
               data-testid="cart-total"
               class="cart-total fs-3 fw-bold text-neon-cyan"
@@ -137,8 +146,9 @@ import { CartService } from "../../../core/cart.service";
             [disabled]="cartService.isEmpty()"
             (click)="goToCheckout()"
             class="btn btn-neon-cyan w-100 fw-bold py-2 fs-5 text-uppercase rounded-3"
+            role="button"
           >
-            Ir al Checkout
+            {{ 'CART.PROCEED' | translate }}
           </button>
         </div>
       </div>
@@ -265,6 +275,7 @@ import { CartService } from "../../../core/cart.service";
 export class CartDrawerComponent {
   cartService = inject(CartService);
   private router = inject(Router);
+  private analyticsService = inject(AnalyticsService);
 
   incrementQuantity(productId: string | number): void {
     const item = this.cartService
@@ -284,6 +295,7 @@ export class CartDrawerComponent {
   }
 
   goToCheckout(): void {
+    this.analyticsService.trackEvent('begin_checkout', { value: this.cartService.totalAmount() });
     this.cartService.closeCart();
     this.router.navigate(["/checkout"]);
   }

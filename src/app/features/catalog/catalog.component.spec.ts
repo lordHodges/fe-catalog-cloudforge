@@ -3,6 +3,7 @@ import { CatalogComponent } from "./catalog.component";
 import { CatalogRepository } from "./domain/catalog.repository";
 import { MockCatalogRepository } from "./data/mock-catalog.repository";
 import { CartService } from "../../core/cart.service";
+import { provideRouter } from "@angular/router";
 
 describe("CatalogComponent", () => {
   let component: CatalogComponent;
@@ -15,6 +16,7 @@ describe("CatalogComponent", () => {
       providers: [
         { provide: CatalogRepository, useClass: MockCatalogRepository },
         CartService,
+        provideRouter([]),
       ],
     }).compileComponents();
 

@@ -6,5 +6,10 @@ export interface Product {
   price: number;
   category: string;
   imageUrl: string;
+  images?: ImageInfo[];
   stock: number;
+}
+export interface ImageInfo {
+  url: string;
+  order: number;
 }

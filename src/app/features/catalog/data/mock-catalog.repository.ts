@@ -76,8 +76,13 @@ export const MOCK_PRODUCTS: Product[] = [
   providedIn: "root",
 })
 export class MockCatalogRepository extends CatalogRepository {
-  getProducts(): Observable<Product[]> {
-    return of([...MOCK_PRODUCTS]);
+  getProducts(page?: number, limit?: number): Observable<Product[]> {
+    let items = [...MOCK_PRODUCTS];
+    if (page !== undefined && limit !== undefined) {
+      const startIndex = (page - 1) * limit;
+      items = items.slice(startIndex, startIndex + limit);
+    }
+    return of(items);
   }
 
   getProductById(id: string): Observable<Product | undefined> {

@@ -1,14 +1,19 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { CommonModule, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import { RouterLink } from "@angular/router";
 import { CatalogStore } from "./state/catalog.store";
 import { CartService } from "../../core/cart.service";
 import { Product } from "./domain/product.model";
+import { TranslatePipe } from "../../shared/pipes/translate.pipe";
+import { TranslationService } from "../../core/services/translation.service";
+import { SeoService } from "../../core/services/seo.service";
+import { AnalyticsService } from "../../core/services/analytics.service";
 
 @Component({
   selector: "app-catalog",
   standalone: true,
-  imports: [CommonModule, DecimalPipe, FormsModule],
+  imports: [CommonModule, DecimalPipe, FormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="container py-4 py-md-5">
       <!-- Hero Header Banner -->
@@ -16,13 +21,11 @@ import { Product } from "./domain/product.model";
         class="hero-banner mb-5 p-4 p-md-5 rounded-4 border border-purple-glow text-center position-relative overflow-hidden shadow-lg"
       >
         <div class="hero-glow"></div>
-        <h1 class="display-4 fw-bold text-neon-cyan mb-3">
-          <i class="bi bi-cloud-check-fill me-2 brand-icon"></i>CloudForge
-          Marketplace
+        <h1 class="display-4 fw-bold text-neon-cyan mb-3" role="heading" aria-level="1">
+          <i class="bi bi-cloud-check-fill me-2 brand-icon" aria-hidden="true"></i>{{ 'CATALOG.HERO_TITLE' | translate }}
         </h1>
         <p class="lead text-light-purple col-lg-8 mx-auto mb-0 fw-medium">
-          Infraestructura cloud de alto rendimiento, microservicios
-          empresariales y soluciones serverless lista para desplegar.
+          {{ 'CATALOG.HERO_DESC' | translate }}
         </p>
       </div>
 
@@ -33,22 +36,23 @@ import { Product } from "./domain/product.model";
             <span
               class="input-group-text bg-purple-dark text-cyan border-purple-glow px-3"
             >
-              <i class="bi bi-search fs-5"></i>
+              <i class="bi bi-search fs-5" aria-hidden="true"></i>
             </span>
             <input
               type="text"
               class="form-control bg-purple-dark text-light border-purple-glow search-input py-2"
-              placeholder="Buscar productos cloud..."
+              [placeholder]="'CATALOG.SEARCH_PLACEHOLDER' | translate"
               [value]="catalogStore.searchQuery()"
               (input)="onSearchInput($event)"
-              aria-label="Buscar productos"
+              [attr.aria-label]="'CATALOG.SEARCH_LABEL' | translate"
+              role="searchbox"
             />
           </div>
         </div>
 
         <div class="col-md-6 col-lg-5 d-flex gap-2 align-items-center">
           <label class="text-secondary fw-semibold mb-0 me-1 d-none d-sm-inline"
-            >Categoría:</label
+            >{{ 'CATALOG.CATEGORY_LABEL' | translate }}</label
           >
           <select
             class="form-select bg-purple-dark text-light border-purple-glow py-2"
@@ -56,6 +60,8 @@ import { Product } from "./domain/product.model";
             name="category"
             [value]="catalogStore.selectedCategory()"
             (change)="onCategorySelect($event)"
+            aria-label="Filtro de categoría"
+            role="combobox"
           >
             @for (cat of catalogStore.categories(); track cat) {
               <option [value]="cat">{{ cat }}</option>
@@ -81,7 +87,7 @@ import { Product } from "./domain/product.model";
 
       <!-- Product Cards Grid -->
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @for (product of catalogStore.filteredProducts(); track product.id) {
+        @for (product of catalogStore.paginatedProducts(); track product.id) {
           <div class="col">
             <div
               class="card h-100 product-card glass-card border-purple-glow"
@@ -89,6 +95,8 @@ import { Product } from "./domain/product.model";
             >
               <div
                 class="card-img-wrapper position-relative overflow-hidden rounded-top"
+                [routerLink]="['/product', product.id]"
+                style="cursor: pointer;"
               >
                 <img
                   [src]="product.imageUrl"
@@ -108,7 +116,9 @@ import { Product } from "./domain/product.model";
                   class="card-title product-title text-light fw-bold mb-2"
                   data-testid="product-name"
                 >
-                  <span data-testid="product-title">{{ product.title }}</span>
+                  <a [routerLink]="['/product', product.id]" class="text-light text-decoration-none hover-cyan">
+                    <span data-testid="product-title">{{ product.title }}</span>
+                  </a>
                 </h5>
 
                 <p
@@ -123,8 +133,9 @@ import { Product } from "./domain/product.model";
                   <div
                     data-testid="product-price"
                     class="product-price fs-4 fw-bold text-cyan"
+                    [attr.aria-label]="'Precio: ' + (product.price | number: '1.0-0') + ' ' + ('CATALOG.CURRENCY_CLP' | translate)"
                   >
-                    \${{ product.price | number: "1.0-0" }} CLP
+                    \${{ product.price | number: "1.0-0" }} {{ 'CATALOG.CURRENCY_CLP' | translate }}
                   </div>
 
                   <span
@@ -133,9 +144,7 @@ import { Product } from "./domain/product.model";
                     [class.bg-success-glow]="product.stock > 0"
                     [class.bg-danger-glow]="product.stock === 0"
                   >
-                    {{
-                      product.stock > 0 ? "Stock: " + product.stock : "Agotado"
-                    }}
+                    {{ product.stock > 0 ? ('CATALOG.STOCK_AVAILABLE' | translate) + product.stock : ('CATALOG.STOCK_OUT' | translate) }}
                   </span>
                 </div>
 
@@ -147,33 +156,82 @@ import { Product } from "./domain/product.model";
                   [class.btn-secondary-disabled]="product.stock === 0"
                   [disabled]="product.stock === 0"
                   (click)="addToCart(product)"
+                  [attr.aria-label]="product.stock === 0 ? ('CATALOG.STOCK_OUT' | translate) : ('CATALOG.BTN_ADD' | translate) + ' ' + product.title"
+                  role="button"
                 >
-                  <i class="bi bi-cart-plus me-2"></i>
-                  {{ product.stock === 0 ? "Agotado" : "Agregar" }}
+                  <i class="bi bi-cart-plus me-2" aria-hidden="true"></i>
+                  {{ product.stock === 0 ? ('CATALOG.STOCK_OUT' | translate) : ('CATALOG.BTN_ADD' | translate) }}
                 </button>
               </div>
             </div>
           </div>
         } @empty {
           <div class="col-12 text-center py-5">
-            <div class="glass-card p-5 rounded-4 border-purple-glow">
+            <div class="glass-card p-5 rounded-4 border-purple-glow" role="alert" aria-live="polite">
               <i
                 class="bi bi-search fs-1 text-cyan mb-3 d-block brand-icon"
+                aria-hidden="true"
               ></i>
-              <h4 class="text-light fw-bold">No se encontraron productos</h4>
+              <h4 class="text-light fw-bold">{{ 'CATALOG.NO_PRODUCTS_TITLE' | translate }}</h4>
               <p class="text-secondary">
-                Intenta ajustar tu búsqueda o filtro de categoría.
+                {{ 'CATALOG.NO_PRODUCTS_DESC' | translate }}
               </p>
               <button
                 class="btn btn-outline-cyan mt-2 px-4 rounded-pill fw-semibold"
                 (click)="resetFilters()"
+                role="button"
               >
-                Restablecer filtros
+                {{ 'CATALOG.RESET_FILTERS' | translate }}
               </button>
             </div>
           </div>
         }
       </div>
+
+      <!-- Pagination Controls -->
+      @if (catalogStore.totalPages() > 1) {
+        <nav [attr.aria-label]="'PAGINATION.ARIA_LABEL' | translate" class="d-flex justify-content-center mt-5" role="navigation">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="catalogStore.page() === 1">
+                <button
+                  type="button"
+                  class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
+                  [disabled]="catalogStore.page() === 1"
+                  (click)="catalogStore.prevPage()"
+                  [attr.aria-label]="'PAGINATION.PREV' | translate"
+                >
+                  <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+            </li>
+            @for (p of catalogStore.pages(); track p) {
+              <li class="page-item" [class.active]="catalogStore.page() === p">
+                  <button
+                    type="button"
+                    class="page-link border-purple-glow px-3 py-2"
+                    [style.background-color]="catalogStore.page() === p ? '#00e5ff' : 'rgba(22, 11, 46, 0.85)'"
+                    [style.color]="catalogStore.page() === p ? '#0d0b18' : '#00e5ff'"
+                    (click)="catalogStore.setPage(p)"
+                    [attr.aria-label]="('PAGINATION.GOTO_PAGE' | translate) + p"
+                    [attr.aria-current]="catalogStore.page() === p ? 'page' : null"
+                  >
+                    {{ p }}
+                  </button>
+              </li>
+            }
+            <li class="page-item" [class.disabled]="catalogStore.page() === catalogStore.totalPages()">
+                <button
+                  type="button"
+                  class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
+                  [disabled]="catalogStore.page() === catalogStore.totalPages()"
+                  (click)="catalogStore.nextPage()"
+                  [attr.aria-label]="'PAGINATION.NEXT' | translate"
+                >
+                  <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </li>
+          </ul>
+        </nav>
+      }
     </div>
   `,
   styles: [
@@ -182,7 +240,7 @@ import { Product } from "./domain/product.model";
         background: linear-gradient(
           135deg,
           rgba(26, 12, 54, 0.95) 0%,
-          rgba(13, 11, 24, 0.95) 100%
+          rgba(13, 0, 24, 0.95) 100%
         );
         backdrop-filter: blur(16px);
         box-shadow:
@@ -318,6 +376,13 @@ import { Product } from "./domain/product.model";
       .text-cyan {
         color: #00e5ff;
       }
+      .hover-cyan {
+        transition: color 0.2s ease;
+      }
+      .hover-cyan:hover {
+        color: #00e5ff !important;
+        text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+      }
       .transition-all {
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -330,9 +395,20 @@ import { Product } from "./domain/product.model";
     `,
   ],
 })
-export class CatalogComponent {
+export class CatalogComponent implements OnInit {
   catalogStore = inject(CatalogStore);
   cartService = inject(CartService);
+  translationService = inject(TranslationService);
+  seoService = inject(SeoService);
+  analyticsService = inject(AnalyticsService);
+
+  ngOnInit() {
+    this.seoService.updateSeo({
+      title: 'Catalog',
+      description: 'Explore the full catalog of CloudForge Marketplace.',
+    });
+    this.analyticsService.trackPageView('/catalog');
+  }
 
   onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
@@ -346,6 +422,7 @@ export class CatalogComponent {
 
   addToCart(product: Product): void {
     this.cartService.addItem(product, 1);
+    this.analyticsService.trackEvent('add_to_cart', { product_id: product.id, product_name: product.title });
   }
 
   resetFilters(): void {
