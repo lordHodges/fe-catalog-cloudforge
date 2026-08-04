@@ -32,24 +32,31 @@ export class HttpCatalogRepository extends CatalogRepository {
       params = params.set("limit", limit.toString());
     }
 
-    return this.http.get<Product[] | { items: Product[] }>(url, { params }).pipe(
-      map((res) => {
-        if (Array.isArray(res)) {
-          return res;
-        } else if (res && typeof res === "object" && "items" in res && Array.isArray(res.items)) {
-          return res.items;
-        }
-        return [];
-      }),
-      catchError(() => {
-        let items = [...MOCK_PRODUCTS];
-        if (page !== undefined && limit !== undefined) {
-          const startIndex = (page - 1) * limit;
-          items = items.slice(startIndex, startIndex + limit);
-        }
-        return of(items);
-      })
-    );
+    return this.http
+      .get<Product[] | { items: Product[] }>(url, { params })
+      .pipe(
+        map((res) => {
+          if (Array.isArray(res)) {
+            return res;
+          } else if (
+            res &&
+            typeof res === "object" &&
+            "items" in res &&
+            Array.isArray(res.items)
+          ) {
+            return res.items;
+          }
+          return [];
+        }),
+        catchError(() => {
+          let items = [...MOCK_PRODUCTS];
+          if (page !== undefined && limit !== undefined) {
+            const startIndex = (page - 1) * limit;
+            items = items.slice(startIndex, startIndex + limit);
+          }
+          return of(items);
+        }),
+      );
   }
 
   getProductById(id: string): Observable<Product | undefined> {
@@ -58,7 +65,7 @@ export class HttpCatalogRepository extends CatalogRepository {
       catchError(() => {
         const product = MOCK_PRODUCTS.find((p) => p.id === id);
         return of(product ? { ...product } : undefined);
-      })
+      }),
     );
   }
 
@@ -67,10 +74,10 @@ export class HttpCatalogRepository extends CatalogRepository {
     return this.http.get<string[]>(url).pipe(
       catchError(() => {
         const categories = Array.from(
-          new Set(MOCK_PRODUCTS.map((p) => p.category))
+          new Set(MOCK_PRODUCTS.map((p) => p.category)),
         );
         return of(["Todas", ...categories]);
-      })
+      }),
     );
   }
 }

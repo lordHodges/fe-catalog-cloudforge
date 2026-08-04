@@ -11,7 +11,11 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
   imports: [CommonModule, DecimalPipe, TranslatePipe],
   template: `
     @if (cartService.isOpen()) {
-      <div class="cart-backdrop" (click)="cartService.closeCart()" role="presentation"></div>
+      <div
+        class="cart-backdrop"
+        (click)="cartService.closeCart()"
+        role="presentation"
+      ></div>
       <div
         data-testid="cart-drawer"
         class="cart-drawer shadow-lg d-flex flex-column"
@@ -25,8 +29,11 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
           class="cart-header p-3 border-bottom border-purple-glow d-flex align-items-center justify-content-between"
         >
           <h5 class="m-0 text-light fw-bold d-flex align-items-center gap-2">
-            <i class="bi bi-cart3 text-neon-cyan brand-icon" aria-hidden="true"></i>
-            <span>{{ 'CART.TITLE' | translate }}</span>
+            <i
+              class="bi bi-cart3 text-neon-cyan brand-icon"
+              aria-hidden="true"
+            ></i>
+            <span>{{ "CART.TITLE" | translate }}</span>
           </h5>
           <button
             type="button"
@@ -49,7 +56,7 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
                 aria-hidden="true"
               ></i>
               <p class="text-light-purple fs-5 mb-0 fw-medium">
-                {{ 'CART.EMPTY' | translate }}
+                {{ "CART.EMPTY" | translate }}
               </p>
             </div>
           } @else {
@@ -115,7 +122,9 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
                     data-testid="remove-item-btn"
                     (click)="removeItem(item.product.id)"
                     class="btn btn-sm btn-outline-danger p-1 border-0 rounded-2"
-                    [attr.aria-label]="('CART.BTN_REMOVE' | translate) + ' ' + item.product.title"
+                    [attr.aria-label]="
+                      ('CART.BTN_REMOVE' | translate) + ' ' + item.product.title
+                    "
                     [title]="'CART.BTN_REMOVE' | translate"
                   >
                     <i class="bi bi-trash fs-5" aria-hidden="true"></i>
@@ -131,7 +140,9 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
           class="cart-footer p-3 border-top border-purple-glow bg-dark-purple"
         >
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-light fw-semibold fs-5">{{ 'CART.TOTAL' | translate }}</span>
+            <span class="text-light fw-semibold fs-5">{{
+              "CART.TOTAL" | translate
+            }}</span>
             <span
               data-testid="cart-total"
               class="cart-total fs-3 fw-bold text-neon-cyan"
@@ -148,7 +159,7 @@ import { AnalyticsService } from "../../../core/services/analytics.service";
             class="btn btn-neon-cyan w-100 fw-bold py-2 fs-5 text-uppercase rounded-3"
             role="button"
           >
-            {{ 'CART.PROCEED' | translate }}
+            {{ "CART.PROCEED" | translate }}
           </button>
         </div>
       </div>
@@ -295,7 +306,9 @@ export class CartDrawerComponent {
   }
 
   goToCheckout(): void {
-    this.analyticsService.trackEvent('begin_checkout', { value: this.cartService.totalAmount() });
+    this.analyticsService.trackEvent("begin_checkout", {
+      value: this.cartService.totalAmount(),
+    });
     this.cartService.closeCart();
     this.router.navigate(["/checkout"]);
   }

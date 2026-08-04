@@ -43,7 +43,7 @@ export class CatalogStore {
   });
 
   readonly totalItems = computed(() => this.filteredProducts().length);
-  
+
   readonly totalPages = computed(() => {
     const total = this.totalItems();
     const limitSize = this.limit();

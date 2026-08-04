@@ -144,7 +144,7 @@ describe("CartService (Vertical Slice)", () => {
 
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
-      providers: [CartService]
+      providers: [CartService],
     });
     const newService = TestBed.inject(CartService);
     expect(newService.cartItems().length).toBe(1);

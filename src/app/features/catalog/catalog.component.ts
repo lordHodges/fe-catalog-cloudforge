@@ -21,11 +21,19 @@ import { AnalyticsService } from "../../core/services/analytics.service";
         class="hero-banner mb-5 p-4 p-md-5 rounded-4 border border-purple-glow text-center position-relative overflow-hidden shadow-lg"
       >
         <div class="hero-glow"></div>
-        <h1 class="display-4 fw-bold text-neon-cyan mb-3" role="heading" aria-level="1">
-          <i class="bi bi-cloud-check-fill me-2 brand-icon" aria-hidden="true"></i>{{ 'CATALOG.HERO_TITLE' | translate }}
+        <h1
+          class="display-4 fw-bold text-neon-cyan mb-3"
+          role="heading"
+          aria-level="1"
+        >
+          <i
+            class="bi bi-cloud-check-fill me-2 brand-icon"
+            aria-hidden="true"
+          ></i
+          >{{ "CATALOG.HERO_TITLE" | translate }}
         </h1>
         <p class="lead text-light-purple col-lg-8 mx-auto mb-0 fw-medium">
-          {{ 'CATALOG.HERO_DESC' | translate }}
+          {{ "CATALOG.HERO_DESC" | translate }}
         </p>
       </div>
 
@@ -51,8 +59,9 @@ import { AnalyticsService } from "../../core/services/analytics.service";
         </div>
 
         <div class="col-md-6 col-lg-5 d-flex gap-2 align-items-center">
-          <label class="text-secondary fw-semibold mb-0 me-1 d-none d-sm-inline"
-            >{{ 'CATALOG.CATEGORY_LABEL' | translate }}</label
+          <label
+            class="text-secondary fw-semibold mb-0 me-1 d-none d-sm-inline"
+            >{{ "CATALOG.CATEGORY_LABEL" | translate }}</label
           >
           <select
             class="form-select bg-purple-dark text-light border-purple-glow py-2"
@@ -116,7 +125,10 @@ import { AnalyticsService } from "../../core/services/analytics.service";
                   class="card-title product-title text-light fw-bold mb-2"
                   data-testid="product-name"
                 >
-                  <a [routerLink]="['/product', product.id]" class="text-light text-decoration-none hover-cyan">
+                  <a
+                    [routerLink]="['/product', product.id]"
+                    class="text-light text-decoration-none hover-cyan"
+                  >
                     <span data-testid="product-title">{{ product.title }}</span>
                   </a>
                 </h5>
@@ -133,9 +145,15 @@ import { AnalyticsService } from "../../core/services/analytics.service";
                   <div
                     data-testid="product-price"
                     class="product-price fs-4 fw-bold text-cyan"
-                    [attr.aria-label]="'Precio: ' + (product.price | number: '1.0-0') + ' ' + ('CATALOG.CURRENCY_CLP' | translate)"
+                    [attr.aria-label]="
+                      'Precio: ' +
+                      (product.price | number: '1.0-0') +
+                      ' ' +
+                      ('CATALOG.CURRENCY_CLP' | translate)
+                    "
                   >
-                    \${{ product.price | number: "1.0-0" }} {{ 'CATALOG.CURRENCY_CLP' | translate }}
+                    \${{ product.price | number: "1.0-0" }}
+                    {{ "CATALOG.CURRENCY_CLP" | translate }}
                   </div>
 
                   <span
@@ -144,7 +162,12 @@ import { AnalyticsService } from "../../core/services/analytics.service";
                     [class.bg-success-glow]="product.stock > 0"
                     [class.bg-danger-glow]="product.stock === 0"
                   >
-                    {{ product.stock > 0 ? ('CATALOG.STOCK_AVAILABLE' | translate) + product.stock : ('CATALOG.STOCK_OUT' | translate) }}
+                    {{
+                      product.stock > 0
+                        ? ("CATALOG.STOCK_AVAILABLE" | translate) +
+                          product.stock
+                        : ("CATALOG.STOCK_OUT" | translate)
+                    }}
                   </span>
                 </div>
 
@@ -156,32 +179,46 @@ import { AnalyticsService } from "../../core/services/analytics.service";
                   [class.btn-secondary-disabled]="product.stock === 0"
                   [disabled]="product.stock === 0"
                   (click)="addToCart(product)"
-                  [attr.aria-label]="product.stock === 0 ? ('CATALOG.STOCK_OUT' | translate) : ('CATALOG.BTN_ADD' | translate) + ' ' + product.title"
+                  [attr.aria-label]="
+                    product.stock === 0
+                      ? ('CATALOG.STOCK_OUT' | translate)
+                      : ('CATALOG.BTN_ADD' | translate) + ' ' + product.title
+                  "
                   role="button"
                 >
                   <i class="bi bi-cart-plus me-2" aria-hidden="true"></i>
-                  {{ product.stock === 0 ? ('CATALOG.STOCK_OUT' | translate) : ('CATALOG.BTN_ADD' | translate) }}
+                  {{
+                    product.stock === 0
+                      ? ("CATALOG.STOCK_OUT" | translate)
+                      : ("CATALOG.BTN_ADD" | translate)
+                  }}
                 </button>
               </div>
             </div>
           </div>
         } @empty {
           <div class="col-12 text-center py-5">
-            <div class="glass-card p-5 rounded-4 border-purple-glow" role="alert" aria-live="polite">
+            <div
+              class="glass-card p-5 rounded-4 border-purple-glow"
+              role="alert"
+              aria-live="polite"
+            >
               <i
                 class="bi bi-search fs-1 text-cyan mb-3 d-block brand-icon"
                 aria-hidden="true"
               ></i>
-              <h4 class="text-light fw-bold">{{ 'CATALOG.NO_PRODUCTS_TITLE' | translate }}</h4>
+              <h4 class="text-light fw-bold">
+                {{ "CATALOG.NO_PRODUCTS_TITLE" | translate }}
+              </h4>
               <p class="text-secondary">
-                {{ 'CATALOG.NO_PRODUCTS_DESC' | translate }}
+                {{ "CATALOG.NO_PRODUCTS_DESC" | translate }}
               </p>
               <button
                 class="btn btn-outline-cyan mt-2 px-4 rounded-pill fw-semibold"
                 (click)="resetFilters()"
                 role="button"
               >
-                {{ 'CATALOG.RESET_FILTERS' | translate }}
+                {{ "CATALOG.RESET_FILTERS" | translate }}
               </button>
             </div>
           </div>
@@ -190,44 +227,61 @@ import { AnalyticsService } from "../../core/services/analytics.service";
 
       <!-- Pagination Controls -->
       @if (catalogStore.totalPages() > 1) {
-        <nav [attr.aria-label]="'PAGINATION.ARIA_LABEL' | translate" class="d-flex justify-content-center mt-5" role="navigation">
+        <nav
+          [attr.aria-label]="'PAGINATION.ARIA_LABEL' | translate"
+          class="d-flex justify-content-center mt-5"
+          role="navigation"
+        >
           <ul class="pagination">
             <li class="page-item" [class.disabled]="catalogStore.page() === 1">
-                <button
-                  type="button"
-                  class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
-                  [disabled]="catalogStore.page() === 1"
-                  (click)="catalogStore.prevPage()"
-                  [attr.aria-label]="'PAGINATION.PREV' | translate"
-                >
-                  <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                </button>
+              <button
+                type="button"
+                class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
+                [disabled]="catalogStore.page() === 1"
+                (click)="catalogStore.prevPage()"
+                [attr.aria-label]="'PAGINATION.PREV' | translate"
+              >
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+              </button>
             </li>
             @for (p of catalogStore.pages(); track p) {
               <li class="page-item" [class.active]="catalogStore.page() === p">
-                  <button
-                    type="button"
-                    class="page-link border-purple-glow px-3 py-2"
-                    [style.background-color]="catalogStore.page() === p ? '#00e5ff' : 'rgba(22, 11, 46, 0.85)'"
-                    [style.color]="catalogStore.page() === p ? '#0d0b18' : '#00e5ff'"
-                    (click)="catalogStore.setPage(p)"
-                    [attr.aria-label]="('PAGINATION.GOTO_PAGE' | translate) + p"
-                    [attr.aria-current]="catalogStore.page() === p ? 'page' : null"
-                  >
-                    {{ p }}
-                  </button>
-              </li>
-            }
-            <li class="page-item" [class.disabled]="catalogStore.page() === catalogStore.totalPages()">
                 <button
                   type="button"
-                  class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
-                  [disabled]="catalogStore.page() === catalogStore.totalPages()"
-                  (click)="catalogStore.nextPage()"
-                  [attr.aria-label]="'PAGINATION.NEXT' | translate"
+                  class="page-link border-purple-glow px-3 py-2"
+                  [style.background-color]="
+                    catalogStore.page() === p
+                      ? '#00e5ff'
+                      : 'rgba(22, 11, 46, 0.85)'
+                  "
+                  [style.color]="
+                    catalogStore.page() === p ? '#0d0b18' : '#00e5ff'
+                  "
+                  (click)="catalogStore.setPage(p)"
+                  [attr.aria-label]="('PAGINATION.GOTO_PAGE' | translate) + p"
+                  [attr.aria-current]="
+                    catalogStore.page() === p ? 'page' : null
+                  "
                 >
-                  <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                  {{ p }}
                 </button>
+              </li>
+            }
+            <li
+              class="page-item"
+              [class.disabled]="
+                catalogStore.page() === catalogStore.totalPages()
+              "
+            >
+              <button
+                type="button"
+                class="page-link bg-purple-dark text-cyan border-purple-glow px-3 py-2"
+                [disabled]="catalogStore.page() === catalogStore.totalPages()"
+                (click)="catalogStore.nextPage()"
+                [attr.aria-label]="'PAGINATION.NEXT' | translate"
+              >
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+              </button>
             </li>
           </ul>
         </nav>
@@ -404,10 +458,10 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit() {
     this.seoService.updateSeo({
-      title: 'Catalog',
-      description: 'Explore the full catalog of CloudForge Marketplace.',
+      title: "Catalog",
+      description: "Explore the full catalog of CloudForge Marketplace.",
     });
-    this.analyticsService.trackPageView('/catalog');
+    this.analyticsService.trackPageView("/catalog");
   }
 
   onSearchInput(event: Event): void {
@@ -422,7 +476,10 @@ export class CatalogComponent implements OnInit {
 
   addToCart(product: Product): void {
     this.cartService.addItem(product, 1);
-    this.analyticsService.trackEvent('add_to_cart', { product_id: product.id, product_name: product.title });
+    this.analyticsService.trackEvent("add_to_cart", {
+      product_id: product.id,
+      product_name: product.title,
+    });
   }
 
   resetFilters(): void {

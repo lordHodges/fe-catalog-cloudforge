@@ -1,5 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from "@angular/common/http/testing";
 import { CartService } from "./cart.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { signal } from "@angular/core";
@@ -85,9 +88,9 @@ describe("CartService Syncing", () => {
 
     service.syncCartOnLogin().subscribe((merged) => {
       expect(merged.length).toBe(2);
-      
-      const item1 = merged.find(i => i.product.id === mockProduct1.id);
-      const item2 = merged.find(i => i.product.id === mockProduct2.id);
+
+      const item1 = merged.find((i) => i.product.id === mockProduct1.id);
+      const item2 = merged.find((i) => i.product.id === mockProduct2.id);
 
       expect(item1).toBeDefined();
       expect(item2).toBeDefined();
@@ -109,4 +112,3 @@ describe("CartService Syncing", () => {
     postReq.flush({});
   });
 });
-

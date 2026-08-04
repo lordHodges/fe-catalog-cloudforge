@@ -27,7 +27,11 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
       <!-- Loading State -->
       @if (loading()) {
         <div class="text-center py-5" data-testid="loading-state">
-          <div class="spinner-border text-cyan mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <div
+            class="spinner-border text-cyan mb-3"
+            role="status"
+            style="width: 3rem; height: 3rem;"
+          >
             <span class="visually-hidden">Cargando...</span>
           </div>
           <p class="text-secondary lead">Cargando detalles del producto...</p>
@@ -36,13 +40,22 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
 
       <!-- Not Found State -->
       @if (!loading() && !product()) {
-        <div class="glass-card text-center p-5 rounded-4 border-purple-glow" data-testid="not-found-state">
-          <i class="bi bi-exclamation-triangle fs-1 text-danger mb-3 d-block"></i>
+        <div
+          class="glass-card text-center p-5 rounded-4 border-purple-glow"
+          data-testid="not-found-state"
+        >
+          <i
+            class="bi bi-exclamation-triangle fs-1 text-danger mb-3 d-block"
+          ></i>
           <h3 class="text-light fw-bold">Producto no encontrado</h3>
           <p class="text-secondary max-width-md mx-auto mb-4">
-            Lo sentimos, el producto que estás buscando no existe o ha sido retirado.
+            Lo sentimos, el producto que estás buscando no existe o ha sido
+            retirado.
           </p>
-          <a routerLink="/catalog" class="btn btn-outline-cyan px-4 rounded-pill fw-semibold">
+          <a
+            routerLink="/catalog"
+            class="btn btn-outline-cyan px-4 rounded-pill fw-semibold"
+          >
             Volver al catálogo
           </a>
         </div>
@@ -53,7 +66,9 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
         <div class="row g-5" data-testid="product-detail-content">
           <!-- Product Image Column -->
           <div class="col-lg-6">
-            <div class="product-gallery glass-card rounded-4 border-purple-glow p-4 d-flex align-items-center justify-content-center position-relative overflow-hidden">
+            <div
+              class="product-gallery glass-card rounded-4 border-purple-glow p-4 d-flex align-items-center justify-content-center position-relative overflow-hidden"
+            >
               <div class="hero-glow"></div>
               <img
                 [src]="p.imageUrl"
@@ -67,15 +82,23 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
 
           <!-- Product Details Column -->
           <div class="col-lg-6">
-            <div class="product-info-panel h-100 d-flex flex-column justify-content-between">
+            <div
+              class="product-info-panel h-100 d-flex flex-column justify-content-between"
+            >
               <div>
                 <!-- Category Badge -->
-                <span class="badge badge-category rounded-pill px-3 py-2 mb-3" data-testid="product-category">
+                <span
+                  class="badge badge-category rounded-pill px-3 py-2 mb-3"
+                  data-testid="product-category"
+                >
                   {{ p.category }}
                 </span>
 
                 <!-- Title -->
-                <h1 class="display-5 text-neon-cyan fw-bold mb-3" data-testid="product-name">
+                <h1
+                  class="display-5 text-neon-cyan fw-bold mb-3"
+                  data-testid="product-name"
+                >
                   {{ p.title }}
                 </h1>
 
@@ -85,24 +108,40 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
                 </p>
 
                 <!-- Description -->
-                <h5 class="text-light fw-semibold mb-2">Descripción del Servicio</h5>
-                <p class="text-secondary lead fs-6 mb-4 lh-lg" data-testid="product-description">
+                <h5 class="text-light fw-semibold mb-2">
+                  Descripción del Servicio
+                </h5>
+                <p
+                  class="text-secondary lead fs-6 mb-4 lh-lg"
+                  data-testid="product-description"
+                >
                   {{ p.description }}
                 </p>
               </div>
 
-              <div class="purchase-section glass-card p-4 rounded-4 border-purple-glow mt-4">
+              <div
+                class="purchase-section glass-card p-4 rounded-4 border-purple-glow mt-4"
+              >
                 <!-- Price and Stock -->
-                <div class="d-flex align-items-center justify-content-between mb-4">
+                <div
+                  class="d-flex align-items-center justify-content-between mb-4"
+                >
                   <div>
-                    <span class="text-secondary small d-block mb-1">Precio</span>
-                    <span class="fs-2 fw-bold text-cyan" data-testid="product-price">
+                    <span class="text-secondary small d-block mb-1"
+                      >Precio</span
+                    >
+                    <span
+                      class="fs-2 fw-bold text-cyan"
+                      data-testid="product-price"
+                    >
                       \${{ p.price | number: "1.0-0" }} CLP
                     </span>
                   </div>
 
                   <div>
-                    <span class="text-secondary small d-block mb-1 text-end">Disponibilidad</span>
+                    <span class="text-secondary small d-block mb-1 text-end"
+                      >Disponibilidad</span
+                    >
                     <span
                       class="stock-badge badge rounded-pill px-3 py-2"
                       [class.bg-success-glow]="p.stock > 0"
@@ -118,7 +157,9 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
                 @if (p.stock > 0) {
                   <div class="d-flex flex-column gap-3">
                     <!-- Quantity Selector -->
-                    <div class="d-flex align-items-center justify-content-between bg-purple-dark border-purple-glow rounded-3 p-2">
+                    <div
+                      class="d-flex align-items-center justify-content-between bg-purple-dark border-purple-glow rounded-3 p-2"
+                    >
                       <span class="text-light fw-medium ps-2">Cantidad</span>
                       <div class="d-flex align-items-center gap-3">
                         <button
@@ -131,7 +172,11 @@ import { AnalyticsService } from "../../../../core/services/analytics.service";
                         >
                           <i class="bi bi-dash fs-5"></i>
                         </button>
-                        <span class="text-light fw-bold fs-5 px-1" data-testid="quantity-value">{{ quantity() }}</span>
+                        <span
+                          class="text-light fw-bold fs-5 px-1"
+                          data-testid="quantity-value"
+                          >{{ quantity() }}</span
+                        >
                         <button
                           type="button"
                           class="btn btn-outline-cyan btn-sm rounded-circle d-flex align-items-center justify-content-center p-0"
@@ -349,7 +394,11 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(prod: Product): void {
     this.cartService.addItem(prod, this.quantity());
-    this.analyticsService.trackEvent('add_to_cart', { product_id: prod.id, product_name: prod.title, quantity: this.quantity() });
+    this.analyticsService.trackEvent("add_to_cart", {
+      product_id: prod.id,
+      product_name: prod.title,
+      quantity: this.quantity(),
+    });
     this.cartService.openCart();
   }
 

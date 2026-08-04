@@ -90,7 +90,7 @@ describe("CatalogStore", () => {
     it("should navigate pages correctly using nextPage and prevPage", () => {
       store.limit.set(3);
       expect(store.page()).toBe(1);
-      
+
       store.nextPage();
       expect(store.page()).toBe(2);
 

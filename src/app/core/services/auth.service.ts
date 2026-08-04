@@ -1,4 +1,11 @@
-import { Injectable, inject, signal, computed, WritableSignal, Signal } from "@angular/core";
+import {
+  Injectable,
+  inject,
+  signal,
+  computed,
+  WritableSignal,
+  Signal,
+} from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, tap } from "rxjs";
 import { AnalyticsService } from "./analytics.service";
@@ -24,8 +31,12 @@ export class AuthService {
   private http = inject(HttpClient);
   private analyticsService = inject(AnalyticsService);
 
-  readonly currentUser: WritableSignal<User | null> = signal<User | null>(this.loadUser());
-  readonly token: WritableSignal<string | null> = signal<string | null>(this.loadToken());
+  readonly currentUser: WritableSignal<User | null> = signal<User | null>(
+    this.loadUser(),
+  );
+  readonly token: WritableSignal<string | null> = signal<string | null>(
+    this.loadToken(),
+  );
   readonly isAuthenticated: Signal<boolean> = computed(() => !!this.token());
 
   private loadToken(): string | null {
@@ -52,15 +63,19 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>("/api/auth/login", { email, password }).pipe(
-      tap((res) => this.handleAuthSuccess(res))
-    );
+    return this.http
+      .post<AuthResponse>("/api/auth/login", { email, password })
+      .pipe(tap((res) => this.handleAuthSuccess(res)));
   }
 
-  register(name: string, email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>("/api/auth/register", { name, email, password }).pipe(
-      tap((res) => this.handleAuthSuccess(res))
-    );
+  register(
+    name: string,
+    email: string,
+    password: string,
+  ): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>("/api/auth/register", { name, email, password })
+      .pipe(tap((res) => this.handleAuthSuccess(res)));
   }
 
   logout(): void {
@@ -72,7 +87,7 @@ export class AuthService {
         localStorage.removeItem(USER_KEY);
       } catch {}
     }
-    this.analyticsService.trackEvent('logout');
+    this.analyticsService.trackEvent("logout");
   }
 
   private handleAuthSuccess(res: AuthResponse): void {
@@ -85,7 +100,7 @@ export class AuthService {
           localStorage.setItem(USER_KEY, JSON.stringify(res.user));
         } catch {}
       }
-      this.analyticsService.trackEvent('login', { user_id: res.user.id });
+      this.analyticsService.trackEvent("login", { user_id: res.user.id });
     }
   }
 }

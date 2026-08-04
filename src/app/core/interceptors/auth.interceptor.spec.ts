@@ -1,4 +1,9 @@
-import { HttpRequest, HttpHandlerFn, HttpResponse, HttpHeaders } from "@angular/common/http";
+import {
+  HttpRequest,
+  HttpHandlerFn,
+  HttpResponse,
+  HttpHeaders,
+} from "@angular/common/http";
 import { authInterceptor } from "./auth.interceptor";
 import { signal } from "@angular/core";
 import { of } from "rxjs";
@@ -14,9 +19,7 @@ describe("authInterceptor", () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [{ provide: AuthService, useValue: authServiceMock }],
     });
   });
 
@@ -40,7 +43,9 @@ describe("authInterceptor", () => {
     const req = new HttpRequest("GET", "/api/test-endpoint");
     const nextSpy: any = (clonedReq: HttpRequest<any>) => {
       expect(clonedReq.headers.has("Authorization")).toBe(true);
-      expect(clonedReq.headers.get("Authorization")).toBe("Bearer mock-jwt-token-123");
+      expect(clonedReq.headers.get("Authorization")).toBe(
+        "Bearer mock-jwt-token-123",
+      );
       return of(new HttpResponse());
     };
 
@@ -49,6 +54,3 @@ describe("authInterceptor", () => {
     });
   });
 });
-
-
-

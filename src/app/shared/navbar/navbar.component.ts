@@ -4,7 +4,10 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
 import { CartService } from "../../core/cart.service";
 
 import { TranslatePipe } from "../pipes/translate.pipe";
-import { TranslationService, SupportedLanguage } from "../../core/services/translation.service";
+import {
+  TranslationService,
+  SupportedLanguage,
+} from "../../core/services/translation.service";
 
 @Component({
   selector: "app-navbar",
@@ -20,8 +23,11 @@ import { TranslationService, SupportedLanguage } from "../../core/services/trans
             role="link"
             aria-label="CloudForge Home"
           >
-            <i class="bi bi-cloud-lightning-fill text-cyan fs-3 brand-icon" aria-hidden="true"></i>
-            <span class="brand-text">{{ 'NAV.BRAND' | translate }}</span>
+            <i
+              class="bi bi-cloud-lightning-fill text-cyan fs-3 brand-icon"
+              aria-hidden="true"
+            ></i>
+            <span class="brand-text">{{ "NAV.BRAND" | translate }}</span>
           </a>
 
           <button
@@ -47,7 +53,7 @@ import { TranslationService, SupportedLanguage } from "../../core/services/trans
                   routerLinkActive="active"
                   role="menuitem"
                 >
-                  {{ 'NAV.CATALOG' | translate }}
+                  {{ "NAV.CATALOG" | translate }}
                 </a>
               </li>
             </ul>
@@ -88,7 +94,7 @@ import { TranslationService, SupportedLanguage } from "../../core/services/trans
                 role="button"
               >
                 <i class="bi bi-cart3 fs-5" aria-hidden="true"></i>
-                <span>{{ 'NAV.CART' | translate }}</span>
+                <span>{{ "NAV.CART" | translate }}</span>
                 @if (cartService.totalItemsCount() > 0) {
                   <span
                     data-testid="cart-count-badge"
@@ -170,7 +176,7 @@ export class NavbarComponent implements OnInit {
 
   toggleLanguage() {
     const current = this.translationService.getLanguage();
-    this.translationService.setLanguage(current === 'es' ? 'en' : 'es');
+    this.translationService.setLanguage(current === "es" ? "en" : "es");
   }
 
   ngOnInit() {

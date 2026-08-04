@@ -26,9 +26,7 @@ describe("OrderHistoryComponent", () => {
 
     await TestBed.configureTestingModule({
       imports: [OrderHistoryComponent, CommonModule],
-      providers: [
-        { provide: OrderRepository, useValue: orderRepoMock }
-      ]
+      providers: [{ provide: OrderRepository, useValue: orderRepoMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderHistoryComponent);
@@ -46,8 +44,9 @@ describe("OrderHistoryComponent", () => {
   });
 
   it("should handle error when loading orders", () => {
-    orderRepoMock.getOrders = () => throwError(() => new Error("Network error"));
-    
+    orderRepoMock.getOrders = () =>
+      throwError(() => new Error("Network error"));
+
     // Re-create component to trigger ngOnInit with error
     fixture = TestBed.createComponent(OrderHistoryComponent);
     component = fixture.componentInstance;
@@ -57,4 +56,3 @@ describe("OrderHistoryComponent", () => {
     expect(component.loading()).toBe(false);
   });
 });
-

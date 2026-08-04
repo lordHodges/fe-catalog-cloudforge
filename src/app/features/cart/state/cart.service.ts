@@ -185,7 +185,11 @@ export class CartService {
   }
 
   syncCartOnLogin(): Observable<CartItem[]> {
-    if (!this.authService || !this.authService.isAuthenticated() || !this.http) {
+    if (
+      !this.authService ||
+      !this.authService.isAuthenticated() ||
+      !this.http
+    ) {
       return of(this.cartItems());
     }
 
@@ -211,8 +215,14 @@ export class CartService {
         localItems.forEach((localItem) => {
           const existing = mergedMap.get(localItem.product.id);
           if (existing) {
-            const newQty = Math.min(existing.quantity + localItem.quantity, localItem.product.stock);
-            mergedMap.set(localItem.product.id, { ...existing, quantity: newQty });
+            const newQty = Math.min(
+              existing.quantity + localItem.quantity,
+              localItem.product.stock,
+            );
+            mergedMap.set(localItem.product.id, {
+              ...existing,
+              quantity: newQty,
+            });
           } else {
             mergedMap.set(localItem.product.id, { ...localItem });
           }
@@ -225,9 +235,9 @@ export class CartService {
 
         return this.http!.post<any>("/api/cart", { items: mergedItems }).pipe(
           map(() => mergedItems),
-          catchError(() => of(mergedItems))
+          catchError(() => of(mergedItems)),
         );
-      })
+      }),
     );
   }
 

@@ -1,5 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule, HttpTestingController } from "@angular/common/http/testing";
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from "@angular/common/http/testing";
 import { AuthService, AuthResponse } from "./auth.service";
 
 describe("AuthService", () => {
@@ -48,17 +51,22 @@ describe("AuthService", () => {
 
     const req = httpMock.expectOne("/api/auth/login");
     expect(req.request.method).toBe("POST");
-    expect(req.request.body).toEqual({ email: "juan@example.com", password: "password123" });
+    expect(req.request.body).toEqual({
+      email: "juan@example.com",
+      password: "password123",
+    });
     req.flush(mockResponse);
   });
 
   it("should register successfully and set state/localStorage", () => {
-    service.register("Juan Perez", "juan@example.com", "password123").subscribe((res) => {
-      expect(res).toEqual(mockResponse);
-      expect(service.currentUser()).toEqual(mockResponse.user);
-      expect(service.token()).toBe(mockResponse.token);
-      expect(service.isAuthenticated()).toBe(true);
-    });
+    service
+      .register("Juan Perez", "juan@example.com", "password123")
+      .subscribe((res) => {
+        expect(res).toEqual(mockResponse);
+        expect(service.currentUser()).toEqual(mockResponse.user);
+        expect(service.token()).toBe(mockResponse.token);
+        expect(service.isAuthenticated()).toBe(true);
+      });
 
     const req = httpMock.expectOne("/api/auth/register");
     expect(req.request.method).toBe("POST");
@@ -81,4 +89,3 @@ describe("AuthService", () => {
     expect(service.isAuthenticated()).toBe(false);
   });
 });
-

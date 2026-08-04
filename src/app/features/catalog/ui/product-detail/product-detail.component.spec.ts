@@ -52,11 +52,19 @@ describe("ProductDetailComponent", () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     const titleElement = compiled.querySelector('[data-testid="product-name"]');
-    const descElement = compiled.querySelector('[data-testid="product-description"]');
-    const priceElement = compiled.querySelector('[data-testid="product-price"]');
+    const descElement = compiled.querySelector(
+      '[data-testid="product-description"]',
+    );
+    const priceElement = compiled.querySelector(
+      '[data-testid="product-price"]',
+    );
 
-    expect(titleElement?.textContent).toContain("Producto de Prueba Cloudforge");
-    expect(descElement?.textContent).toContain("Instancia cloud de prueba de alto rendimiento");
+    expect(titleElement?.textContent).toContain(
+      "Producto de Prueba Cloudforge",
+    );
+    expect(descElement?.textContent).toContain(
+      "Instancia cloud de prueba de alto rendimiento",
+    );
     expect(priceElement?.textContent).toContain("15");
     expect(priceElement?.textContent).toContain("000");
   });
@@ -94,7 +102,7 @@ describe("ProductDetailComponent", () => {
 
   it("should render not found state if product id is invalid", () => {
     mockActivatedRoute.paramMap = of(convertToParamMap({ id: "invalid-id" }));
-    
+
     fixture = TestBed.createComponent(ProductDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -103,7 +111,9 @@ describe("ProductDetailComponent", () => {
     expect(component.product()).toBeUndefined();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const notFoundEl = compiled.querySelector('[data-testid="not-found-state"]');
+    const notFoundEl = compiled.querySelector(
+      '[data-testid="not-found-state"]',
+    );
     expect(notFoundEl).toBeTruthy();
   });
 });
