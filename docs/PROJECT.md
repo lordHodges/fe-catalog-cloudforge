@@ -53,4 +53,4 @@ src/
 | M3 | Cart Vertical Slice | Signals cart store, UI drawer/page | M2 | DONE |
 | M4 | Checkout Vertical Slice | Backend integration with `be-cloudforge` REST API | M3, M0 | DONE |
 | M5 | UI/UX & Neon Theme Hardening | Dark purple aesthetic, Bootstrap layout, M3 design | M2, M3, M4 | DONE |
-| M6 | Final E2E Pass & Coverage Hardening | Pass 100% Playwright tests & Tier 5 whitebox tests | All | IN_PROGRESS |
+| M6 | Final E2E Pass & Coverage Hardening | Pass 100% Playwright tests & Tier 5 whitebox tests | All | DONE |
