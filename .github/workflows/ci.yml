@@ -1,4 +1,4 @@
-name: CI — Lint, Test, Build, E2E
+name: CI/CD — Lint, Test, Build, E2E, Deploy
 
 on:
   push:
@@ -7,16 +7,15 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  BASE_URL: 'http://localhost:4200'
-  CI: 'true'
-  NG_CLI_ANALYTICS: 'false'
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'false'
+  BASE_URL: "http://localhost:4200"
+  CI: "true"
+  NG_CLI_ANALYTICS: "false"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "false"
 
 jobs:
   lint:
@@ -30,8 +29,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -50,8 +49,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -70,8 +69,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -97,8 +96,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -133,3 +132,27 @@ jobs:
           name: test-results
           path: test-results/
           retention-days: 7
+
+  deploy:
+    name: Deploy to Firebase Hosting
+    needs: [lint, unit-tests, build, e2e-tests]
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_CLOUDFORGE_MARKET_9DBCF }}"
+          channelId: live
+          projectId: cloudforge-market-9dbcf
